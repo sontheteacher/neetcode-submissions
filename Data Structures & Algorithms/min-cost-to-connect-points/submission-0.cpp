@@ -1,0 +1,37 @@
+class Solution {
+public:
+    int minCostConnectPoints(vector<vector<int>>& points) {
+        int n = points.size();
+        vector< vector<pair<int, int>> > adj(n);
+        for (int i = 0; i < n; ++i) {
+            int x1 = points[i][0];
+            int y1 = points[i][1];
+            for (int j = i + 1; j < n; ++j) {
+                int x2 = points[j][0];
+                int y2 = points[j][1];
+                double dist = abs(x1 - x2)  + abs(y1 - y2);
+                adj[i].push_back({j, dist});
+                adj[j].push_back({i, dist});
+            }
+        }
+        unordered_set<int> visited;
+        priority_queue<pair<int, int>, std::vector<pair<int, int>>, 
+            std::greater<pair<int, int>>> minH;
+        int res = 0;
+        // add first node and mark it as visited
+        minH.push({0, 0});
+        while (!minH.empty()) {
+            auto [cost, i] = minH.top(); minH.pop();
+            if (visited.count(i))
+                continue;
+            visited.insert(i);
+            res += cost;
+            for (auto [nei, cost] : adj[i]) {
+                if (visited.count(nei))
+                    continue;
+                minH.push({cost, nei});
+            }
+        }
+        return res;
+    }
+};
